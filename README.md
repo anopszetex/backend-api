@@ -1,4 +1,5 @@
-Projeto X
+### Projeto X
+
 Este é o README para o Projeto X, uma aplicação que utiliza Fastify, Knex e o plugin Mercurius para criar uma API GraphQL.
 
 Requisitos
