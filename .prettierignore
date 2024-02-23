@@ -1,0 +1,6 @@
+.yarn
+.git
+dist
+node_modules
+src/__generated__
+*.generated.ts
