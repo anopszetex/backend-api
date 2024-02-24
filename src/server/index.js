@@ -30,8 +30,6 @@ export async function buildServer(signal) {
   return {
     async listen(port) {
       await app.listen({ host: '0.0.0.0', port });
-
-      return { url: `http://${app.server.address().address}:${port}/graphql` };
     },
   };
 }
