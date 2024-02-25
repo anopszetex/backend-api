@@ -25,9 +25,13 @@ export async function buildServer(signal) {
   closeWithGrace({ delay: 500 }, () => {
     app.log.info('Close server');
     app.server.close();
+    app.close();
   });
 
   return {
+    get() {
+      return app;
+    },
     async listen(port) {
       await app.listen({ host: '0.0.0.0', port });
     },
