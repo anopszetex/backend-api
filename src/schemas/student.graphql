@@ -7,5 +7,5 @@ type Student {
 }
 
 type Query {
-  student: [Student!]!
+  students: [Student!]!
 }

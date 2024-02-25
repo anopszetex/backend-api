@@ -1,4 +1,4 @@
-export async function student() {
+export async function students() {
   return [
     {
       id: 1,
