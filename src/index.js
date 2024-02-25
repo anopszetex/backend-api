@@ -3,7 +3,7 @@ import { buildServer } from './server/index.js';
 async function start() {
   const server = await buildServer();
 
-  const port = process.env.PORT || 4000;
+  const port = process.env.PORT ?? 4000;
 
   try {
     await server.listen(port);
