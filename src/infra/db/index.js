@@ -2,7 +2,7 @@ import knex from 'knex';
 
 import { resolve } from 'node:path';
 
-import { getDatabaseConfig as config } from './../config.js';
+import { getDatabaseConfig as config } from './config.js';
 
 import { __dirname } from './../../support/index.js';
 
@@ -13,7 +13,7 @@ function buildConnectionConfig() {
     connection: {
       host: config.DB_HOST,
       port: config.DB_PORT,
-      user: config.DB_USERNAME,
+      user: config.DB_USER,
       password: config.DB_PASSWORD,
       database: config.DB_NAME,
     },
