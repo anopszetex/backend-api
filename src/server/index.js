@@ -7,7 +7,7 @@ import { makeExecutableSchema } from '@graphql-tools/schema';
 import { buildResolvers, buildTypeDefs } from './graphqlLoader.js';
 import { createConnection } from '../infra/db/index.js';
 
-export async function buildServer(signal) {
+export async function buildServer() {
   const app = fastify({ logger: true });
 
   const [typeDefs, resolvers] = await Promise.all([
@@ -30,13 +30,18 @@ export async function buildServer(signal) {
     status: 'OK',
   }));
 
-  closeWithGrace({ delay: 500 }, () => {
-    app.log.info('Close server');
-    app.server.close();
-    app.close();
+  closeWithGrace({ delay: 500 }, async () => {
+    await stop();
   });
 
+  const stop = async () => {
+    app.log.info('Close server');
+    app.server.close();
+    await app.close();
+  };
+
   return {
+    stop,
     get() {
       return app;
     },

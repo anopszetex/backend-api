@@ -13,4 +13,4 @@ async function start() {
   }
 }
 
-start().catch(console.err);
+export { start };
