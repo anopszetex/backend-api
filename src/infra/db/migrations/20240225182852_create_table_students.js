@@ -3,7 +3,7 @@ export function up(knex) {
     table.increments('id').primary();
     table.string('nome').notNullable();
     table.string('email').notNullable();
-    table.integer('ra').notNullable().unique();
+    table.string('ra').notNullable().unique();
     table.string('cpf').notNullable();
   });
 }
