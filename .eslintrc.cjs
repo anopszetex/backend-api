@@ -3,24 +3,24 @@ module.exports = {
     es2021: true,
     node: true,
   },
-  extends: ["google", "prettier", "eslint:recommended", "plugin:n/recommended"],
-  plugins: ["promise"],
+  extends: ['google', 'prettier', 'eslint:recommended', 'plugin:n/recommended'],
+  plugins: ['promise'],
   overrides: [
     {
       env: {
         node: true,
       },
-      files: [".eslintrc.{js,cjs}"],
+      files: ['.eslintrc.{js,cjs}'],
       parserOptions: {
-        sourceType: "script",
+        sourceType: 'script',
       },
     },
   ],
   parserOptions: {
-    ecmaVersion: "latest",
-    sourceType: "module",
+    ecmaVersion: 'latest',
+    sourceType: 'module',
   },
   rules: {
-    "require-jsdoc": "off",
+    'require-jsdoc': 'off',
   },
 };
