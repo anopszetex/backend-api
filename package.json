@@ -9,7 +9,11 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "db:prepare": "yarn knex:migrate && yarn knex:seed",
     "knex:migrate": "knex migrate:latest",
-    "knex:seed": "knex seed:run"
+    "knex:seed": "knex seed:run",
+    "lint:ci": "eslint --ext .js",
+    "lint": "yarn lint:ci --fix",
+    "format": "prettier . -w -u",
+    "format:check": "prettier . -c -u"
   },
   "keywords": [],
   "author": "",
