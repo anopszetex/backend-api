@@ -75,7 +75,7 @@ describe('Mutation to add a student', () => {
   it('Email cannot be empty', async () => {
     const input = {
       name: 'any_name',
-      email: '',
+      email: undefined,
       cpf: '12345678900',
       ra: '123456',
     };
@@ -102,8 +102,35 @@ describe('Mutation to add a student', () => {
     }
   });
 
-  it.todo('Email must have a valid format (e.g. demo@demo.com');
-  it.todo('Email cannot have more than 100 characters');
+  it('Email must have a valid format (e.g. demo@demo.com', async () => {
+    const input = {
+      name: 'any_name',
+      email: 'teste',
+      cpf: '12345678900',
+      ra: '123456',
+    };
+
+    try {
+      await createStudent({}, { input }, {});
+    } catch (error) {
+      expectError(error, 'Invalid.emailFormat');
+    }
+  });
+
+  it('Email cannot have more than 100 characters', async () => {
+    const input = {
+      name: 'any_name',
+      email: 'a'.repeat(101),
+      cpf: '12345678900',
+      ra: '123456',
+    };
+
+    try {
+      await createStudent({}, { input }, {});
+    } catch (error) {
+      expectError(error, 'Invalid.EmailLength');
+    }
+  });
   it.todo('CPF cannot have white space');
   it.todo('CPF must have 11 characters');
   it.todo('CPF must be unique');
