@@ -7,5 +7,9 @@ export async function createStudent(parent, args, context, info) {
     return Promise.reject(ValidationError.build('Invalid.whitespace'));
   }
 
+  if (name.length > 100) {
+    return Promise.reject(ValidationError.build('Invalid.length'));
+  }
+
   return null;
 }
