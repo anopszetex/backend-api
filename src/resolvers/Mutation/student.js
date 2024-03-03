@@ -1,4 +1,4 @@
-import { ValidationError } from '../../support/errors.js';
+import { ValidationError, isValidEmail } from '../../support/index.js';
 
 /**
  * Validates the given name.
@@ -30,6 +30,14 @@ export async function createStudent(parent, args, context, info) {
 
   if (!email.trim()) {
     return Promise.reject(ValidationError.build('Invalid.emailWithWhitespace'));
+  }
+
+  if (email.length > 100) {
+    return Promise.reject(ValidationError.build('Invalid.EmailLength'));
+  }
+
+  if (!isValidEmail(email)) {
+    return Promise.reject(ValidationError.build('Invalid.emailFormat'));
   }
 
   return null;
