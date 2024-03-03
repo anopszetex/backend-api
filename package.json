@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon --env-file=.env --ext js,graphql bin/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node --test",
+    "test:watch": "node --test --watch              ",
     "db:prepare": "yarn knex:migrate && yarn knex:seed",
     "knex:migrate": "knex migrate:latest",
     "knex:seed": "knex seed:run",
