@@ -25,6 +25,38 @@ describe('Mutation to add a student', () => {
     }
   });
 
+  it('Name cannot be null or undefined', async () => {
+    const input = {
+      name: null,
+      email: 'any_email@.com',
+      cpf: '12345678900',
+      ra: '123456',
+    };
+
+    try {
+      await createStudent({}, { input }, {});
+    } catch (error) {
+      expectError(error, 'Invalid.name');
+    }
+  });
+
+  it('Name cannot be null or undefined', async () => {
+    const input = {
+      name: 'any_name',
+      email: 'any_email@.com',
+      cpf: '12345678900',
+      ra: '123456',
+    };
+
+    input.name = undefined;
+
+    try {
+      await createStudent({}, { input }, {});
+    } catch (error) {
+      expectError(error, 'Invalid.name');
+    }
+  });
+
   it('Name cannot have more than 100 characters', async () => {
     const input = {
       name: 'a'.repeat(101),
