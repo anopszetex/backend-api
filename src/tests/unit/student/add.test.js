@@ -4,6 +4,12 @@ import { strictEqual } from 'node:assert';
 import { createStudent } from './../../../resolvers/Mutation/student.js';
 
 describe('Mutation to add a student', () => {
+  function expectError(error, message) {
+    strictEqual(error.message, message);
+    strictEqual(error.extensions.code, 'BUSINESS_VALIDATION_FAILED');
+    strictEqual(error instanceof Error, true);
+  }
+
   it('Name cannot have white space', async () => {
     const input = {
       name: '  ',
@@ -15,13 +21,25 @@ describe('Mutation to add a student', () => {
     try {
       await createStudent({}, { input }, {});
     } catch (error) {
-      strictEqual(error.message, 'Invalid.whitespace');
-      strictEqual(error.extensions.code, 'BUSINESS_VALIDATION_FAILED');
-      strictEqual(error instanceof Error, true);
+      expectError(error, 'Invalid.whitespace');
     }
   });
 
-  it.todo('Name cannot have more than 100 characters');
+  it('Name cannot have more than 100 characters', async () => {
+    const input = {
+      name: 'a'.repeat(101),
+      email: 'any_email@.com',
+      cpf: '12345678900',
+      ra: '123456',
+    };
+
+    try {
+      await createStudent({}, { input }, {});
+    } catch (error) {
+      expectError(error, 'Invalid.length');
+    }
+  });
+
   it.todo('Email cannot have white space');
   it.todo('Email cannot be empty');
 
