@@ -72,8 +72,35 @@ describe('Mutation to add a student', () => {
     }
   });
 
-  it.todo('Email cannot have white space');
-  it.todo('Email cannot be empty');
+  it('Email cannot be empty', async () => {
+    const input = {
+      name: 'any_name',
+      email: '',
+      cpf: '12345678900',
+      ra: '123456',
+    };
+
+    try {
+      await createStudent({}, { input }, {});
+    } catch (error) {
+      expectError(error, 'Invalid.email');
+    }
+  });
+
+  it('Email cannot have white space', async () => {
+    const input = {
+      name: 'any_name',
+      email: '  ',
+      cpf: '12345678900',
+      ra: '123456',
+    };
+
+    try {
+      await createStudent({}, { input }, {});
+    } catch (error) {
+      expectError(error, 'Invalid.emailWithWhitespace');
+    }
+  });
 
   it.todo('Email must have a valid format (e.g. demo@demo.com');
   it.todo('Email cannot have more than 100 characters');
