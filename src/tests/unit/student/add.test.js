@@ -218,7 +218,10 @@ describe('Mutation to add a student', () => {
 
   it.todo('validate is cpf is valid');
 
+  it.todo('must create a student');
+
   // todo - must be test e2e
   it.todo('RA must be unique');
   it.todo('CPF must be unique');
+  it.todo('must return the student');
 });
