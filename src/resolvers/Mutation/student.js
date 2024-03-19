@@ -38,9 +38,13 @@ async function validateEmail(email) {
 }
 
 export async function createStudent(parent, args, context, info) {
-  const { name, email } = args.input ?? {};
+  const { name, email, cpf } = args.input ?? {};
 
   await Promise.all([validateName(name), validateEmail(email)]);
+
+  if (!cpf) {
+    return Promise.reject(ValidationError.build('Invalid.cpf'));
+  }
 
   return null;
 }
