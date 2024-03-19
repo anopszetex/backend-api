@@ -152,7 +152,21 @@ describe('Mutation to add a student', () => {
     }
   });
 
-  it.todo('CPF cannot have white space', () => {});
+  it('CPF cannot have white space', async () => {
+    const input = {
+      name: 'any_name',
+      email: 'teste@teste.com',
+      cpf: '    ',
+      ra: '123456',
+    };
+
+    try {
+      await createStudent({}, { input }, {});
+      fail('Should not reach this point');
+    } catch (error) {
+      expectError(error, 'Invalid.cpfWithWhitespace');
+    }
+  });
 
   it.todo('CPF must have 11 characters');
   it.todo('CPF must be unique');
