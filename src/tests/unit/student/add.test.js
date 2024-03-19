@@ -168,7 +168,21 @@ describe('Mutation to add a student', () => {
     }
   });
 
-  it.todo('CPF must have 11 characters');
+  it('CPF must have 11 characters', async () => {
+    const input = {
+      name: 'any_name',
+      email: 'teste@teste.com',
+      cpf: '32312321321321',
+      ra: '123456',
+    };
+
+    try {
+      await createStudent({}, { input }, {});
+      fail('Should not reach this point');
+    } catch (error) {
+      expectError(error, 'Invalid.cpfLength');
+    }
+  });
   it.todo('CPF must be unique');
 
   it.todo('RA cannot have white space');
