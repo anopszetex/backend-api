@@ -40,7 +40,7 @@ describe('Mutation to add a student', () => {
     }
   });
 
-  it('Name cannot be null or undefined', async () => {
+  it('Name cannot be undefined', async () => {
     const input = {
       name: 'any_name',
       email: 'any_email@.com',
