@@ -136,17 +136,17 @@ describe('Mutation to add a student', () => {
     }
   });
 
-  it.skip('CPF cannot be null', async () => {
+  it('CPF cannot be null', async () => {
     const input = {
       name: 'any_name',
-      email: 'any_email@.com',
+      email: 'teste@teste.com',
       cpf: null,
       ra: '123456',
     };
 
     try {
       await createStudent({}, { input }, {});
-      // fail('Should not reach this point');
+      fail('Should not reach this point');
     } catch (error) {
       expectError(error, 'Invalid.cpf');
     }
