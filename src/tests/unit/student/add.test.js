@@ -183,9 +183,40 @@ describe('Mutation to add a student', () => {
       expectError(error, 'Invalid.cpfLength');
     }
   });
-  it.todo('CPF must be unique');
 
-  it.todo('RA cannot have white space');
-  it.todo('RA must have 6 characters');
+  it('RA cannot have white space', async () => {
+    const input = {
+      name: 'any_name',
+      email: 'teste@teste.com',
+      cpf: '28861701000',
+      ra: '   ',
+    };
+
+    try {
+      await createStudent({}, { input }, {});
+      fail('Should not reach this point');
+    } catch (error) {
+      expectError(error, 'Invalid.raWithWhitespace');
+    }
+  });
+
+  it('RA must have 6 characters', async () => {
+    const input = {
+      name: 'any_name',
+      email: 'teste@teste.com',
+      cpf: '28861701000',
+      ra: '1234567', //* 7 characters
+    };
+
+    try {
+      await createStudent({}, { input }, {});
+      fail('Should not reach this point');
+    } catch (error) {
+      expectError(error, 'Invalid.raLength');
+    }
+  });
+
+  // todo - must be test e2e
   it.todo('RA must be unique');
+  it.todo('CPF must be unique');
 });
