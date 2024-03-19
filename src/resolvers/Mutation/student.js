@@ -50,5 +50,9 @@ export async function createStudent(parent, args, context, info) {
     return Promise.reject(ValidationError.build('Invalid.cpfWithWhitespace'));
   }
 
+  if (cpf.length !== 11) {
+    return Promise.reject(ValidationError.build('Invalid.cpfLength'));
+  }
+
   return null;
 }
