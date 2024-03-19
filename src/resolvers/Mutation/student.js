@@ -19,11 +19,7 @@ async function validateName(name) {
   }
 }
 
-export async function createStudent(parent, args, context, info) {
-  const { name, email } = args.input ?? {};
-
-  await validateName(name);
-
+async function validateEmail(email) {
   if (!email) {
     return Promise.reject(ValidationError.build('Invalid.email'));
   }
@@ -39,6 +35,12 @@ export async function createStudent(parent, args, context, info) {
   if (!isValidEmail(email)) {
     return Promise.reject(ValidationError.build('Invalid.emailFormat'));
   }
+}
+
+export async function createStudent(parent, args, context, info) {
+  const { name, email } = args.input ?? {};
+
+  await Promise.all([validateName(name), validateEmail(email)]);
 
   return null;
 }
