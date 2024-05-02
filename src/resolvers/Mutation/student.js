@@ -53,7 +53,7 @@ async function validateRa(ra) {
   }
 }
 
-export async function createStudent(parent, args, context, info) {
+export async function createStudent(parent, args, context) {
   const { name, email, cpf, ra } = args.input ?? {};
 
   await Promise.all([
@@ -62,6 +62,8 @@ export async function createStudent(parent, args, context, info) {
     validateCpf(cpf),
     validateRa(ra),
   ]);
+
+  // await context.database('students').insert({ name, email, cpf, ra });
 
   return null;
 }
