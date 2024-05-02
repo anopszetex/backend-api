@@ -1,114 +1,55 @@
-import { ValidationError, isValidEmail } from '../../support/index.js';
+import {
+  ValidationError,
+  isValidEmail,
+  isValidFormat,
+  sanitizeCpf,
+} from '../../support/index.js';
 
-// const validations = [
-//   {
-//     prop: 'name',
-//     require: true,
-//     type: 'string',
-//     max: 100,
-//     removeWhitespace: true,
-//     messages: [
-//       ['require', 'Invalid.name'],
-//       ['whitespace', 'Invalid.whitespace'],
-//       ['length', 'Invalid.length'],
-//     ],
-//   },
-//   {
-//     prop: 'email',
-//     require: true,
-//     type: 'string',
-//     max: 100,
-//     removeWhitespace: true,
-//     messages: [
-//       ['require', 'Invalid.email'],
-//       ['whitespace', 'Invalid.emailWithWhitespace'],
-//       ['length', 'Invalid.EmailLength'],
-//       ['format', 'Invalid.emailFormat'],
-//     ],
-//   },
-//   {
-//     prop: 'cpf',
-//     require: true,
-//     type: 'string',
-//     max: 11,
-//     removeWhitespace: true,
-//     messages: [
-//       ['require', 'Invalid.cpf'],
-//       ['whitespace', 'Invalid.cpfWithWhitespace'],
-//       ['length', 'Invalid.cpfLength'],
-//     ],
-//   },
-//   {
-//     prop: 'ra',
-//     require: false,
-//     type: 'string',
-//     max: 6,
-//     removeWhitespace: true,
-//     messages: [
-//       ['whitespace', 'Invalid.raWithWhitespace'],
-//       ['length', 'Invalid.raLength'],
-//     ],
-//   },
-// ];
-
-/**
- * Validates the given name.
- * @param {string} name - The name to be validated.
- * @return {Promise} A promise that resolves if the name is valid, or rejects with a validation error.
- */
-async function validateName(name) {
-  if (!name) {
-    return Promise.reject(ValidationError.build('Invalid.name'));
+function validateField(value, fieldName) {
+  if (!value) {
+    return Promise.reject(ValidationError.build(`Invalid.${fieldName}`));
   }
 
-  if (!name.trim()) {
-    return Promise.reject(ValidationError.build('Invalid.whitespace'));
+  if (typeof value == 'string' && !value.trim()) {
+    return Promise.reject(
+      ValidationError.build(`Invalid.${fieldName}.withWhitespace`)
+    );
   }
 
-  if (name.length > 100) {
-    return Promise.reject(ValidationError.build('Invalid.length'));
+  if (value.length > 100) {
+    return Promise.reject(ValidationError.build(`Invalid.${fieldName}.length`));
   }
 }
 
 async function validateEmail(email) {
-  if (!email) {
-    return Promise.reject(ValidationError.build('Invalid.email'));
-  }
-
-  if (!email.trim()) {
-    return Promise.reject(ValidationError.build('Invalid.emailWithWhitespace'));
-  }
-
-  if (email.length > 100) {
-    return Promise.reject(ValidationError.build('Invalid.EmailLength'));
-  }
+  await validateField(email, 'email');
 
   if (!isValidEmail(email)) {
-    return Promise.reject(ValidationError.build('Invalid.emailFormat'));
+    return Promise.reject(ValidationError.build('Invalid.email.format'));
   }
 }
 
 async function validateCpf(cpf) {
-  if (!cpf) {
-    return Promise.reject(ValidationError.build('Invalid.cpf'));
+  const newCpf = sanitizeCpf(cpf);
+
+  await validateField(cpf, 'cpf');
+
+  if (newCpf.length !== 11) {
+    return Promise.reject(ValidationError.build('Invalid.cpf.length'));
   }
 
-  if (!cpf.trim()) {
-    return Promise.reject(ValidationError.build('Invalid.cpfWithWhitespace'));
-  }
-
-  if (cpf.length !== 11) {
-    return Promise.reject(ValidationError.build('Invalid.cpfLength'));
+  if (!isValidFormat(newCpf)) {
+    return Promise.reject(ValidationError.build('Invalid.cpf.format'));
   }
 }
 
 async function validateRa(ra) {
   if (ra && !ra.trim()) {
-    return Promise.reject(ValidationError.build('Invalid.raWithWhitespace'));
+    return Promise.reject(ValidationError.build('Invalid.ra.withWhitespace'));
   }
 
   if (ra && ra.length > 6) {
-    return Promise.reject(ValidationError.build('Invalid.raLength'));
+    return Promise.reject(ValidationError.build('Invalid.ra.length'));
   }
 }
 
@@ -116,7 +57,7 @@ export async function createStudent(parent, args, context, info) {
   const { name, email, cpf, ra } = args.input ?? {};
 
   await Promise.all([
-    validateName(name),
+    validateField(name, 'name'),
     validateEmail(email),
     validateCpf(cpf),
     validateRa(ra),
