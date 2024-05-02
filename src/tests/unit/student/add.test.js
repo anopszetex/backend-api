@@ -21,7 +21,7 @@ describe('Mutation to add a student', () => {
     try {
       await createStudent({}, { input }, {});
     } catch (error) {
-      expectError(error, 'Invalid.whitespace');
+      expectError(error, 'Invalid.name.withWhitespace');
     }
   });
 
@@ -68,7 +68,7 @@ describe('Mutation to add a student', () => {
     try {
       await createStudent({}, { input }, {});
     } catch (error) {
-      expectError(error, 'Invalid.length');
+      expectError(error, 'Invalid.name.length');
     }
   });
 
@@ -100,7 +100,7 @@ describe('Mutation to add a student', () => {
       await createStudent({}, { input }, {});
       fail('Should not reach this point');
     } catch (error) {
-      expectError(error, 'Invalid.emailWithWhitespace');
+      expectError(error, 'Invalid.email.withWhitespace');
     }
   });
 
@@ -116,7 +116,7 @@ describe('Mutation to add a student', () => {
       await createStudent({}, { input }, {});
       fail('Should not reach this point');
     } catch (error) {
-      expectError(error, 'Invalid.EmailLength');
+      expectError(error, 'Invalid.email.length');
     }
   });
 
@@ -132,7 +132,7 @@ describe('Mutation to add a student', () => {
       await createStudent({}, { input }, {});
       fail('Should not reach this point');
     } catch (error) {
-      expectError(error, 'Invalid.emailFormat');
+      expectError(error, 'Invalid.email.format');
     }
   });
 
@@ -164,7 +164,7 @@ describe('Mutation to add a student', () => {
       await createStudent({}, { input }, {});
       fail('Should not reach this point');
     } catch (error) {
-      expectError(error, 'Invalid.cpfWithWhitespace');
+      expectError(error, 'Invalid.cpf.withWhitespace');
     }
   });
 
@@ -180,7 +180,23 @@ describe('Mutation to add a student', () => {
       await createStudent({}, { input }, {});
       fail('Should not reach this point');
     } catch (error) {
-      expectError(error, 'Invalid.cpfLength');
+      expectError(error, 'Invalid.cpf.length');
+    }
+  });
+
+  it('CPF must have a valid format', { only: true }, async (t) => {
+    const input = {
+      name: 'any_name',
+      email: 'teste@teste.com',
+      cpf: '123.413.45a-22',
+      ra: '123456',
+    };
+
+    try {
+      await createStudent({}, { input }, {});
+      fail('Should not reach this point');
+    } catch (error) {
+      expectError(error, 'Invalid.cpf.format');
     }
   });
 
@@ -196,7 +212,7 @@ describe('Mutation to add a student', () => {
       await createStudent({}, { input }, {});
       fail('Should not reach this point');
     } catch (error) {
-      expectError(error, 'Invalid.raWithWhitespace');
+      expectError(error, 'Invalid.ra.withWhitespace');
     }
   });
 
@@ -212,7 +228,7 @@ describe('Mutation to add a student', () => {
       await createStudent({}, { input }, {});
       fail('Should not reach this point');
     } catch (error) {
-      expectError(error, 'Invalid.raLength');
+      expectError(error, 'Invalid.ra.length');
     }
   });
 
