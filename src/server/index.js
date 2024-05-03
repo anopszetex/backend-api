@@ -7,8 +7,8 @@ import { makeExecutableSchema } from '@graphql-tools/schema';
 import { buildResolvers, buildTypeDefs } from './graphqlLoader.js';
 import { createConnection } from '../infra/db/index.js';
 
-import { path } from 'node:path'
-import {__dirname} from './../support/index.js'
+import path from 'node:path';
+import { __dirname } from './../support/index.js';
 
 export async function buildServer() {
   const app = fastify({ logger: true });
@@ -17,12 +17,6 @@ export async function buildServer() {
     buildTypeDefs(),
     buildResolvers(),
   ]);
-
-  console.log(process.env.DB_HOST);
-  // console.log(process.env.DB_PORT);
-  // console.log(process.env.DB_USER);
-  // console.log(process.env.DB_PASSWORD);
-  // console.log(process.env.DB_NAME);
 
   const database = createConnection();
 
@@ -55,16 +49,19 @@ export async function buildServer() {
     get() {
       return app;
     },
-    async migrate ()  {
+    async migrate() {
       await database.migrate.latest({
-         directory: path.join(__dirname, './../infra/db/migrations')
+        directory: path.join(
+          __dirname(import.meta.url),
+          './../infra/db/migrations'
+        ),
       });
     },
     async seed() {
       return database.seed.run({
-          directory: path.join(__dirname, './../infra/db/seeds')
-      })
-    }.
+        directory: path.join(__dirname(import.meta.url), './../infra/db/seeds'),
+      });
+    },
     async listen(port) {
       await app.listen({ host: '0.0.0.0', port });
     },
