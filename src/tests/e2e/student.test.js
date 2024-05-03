@@ -3,6 +3,7 @@ import { describe, before, /* before, after, */ it } from 'node:test';
 import { buildServer } from './../../server/index.js';
 
 import { setTimeout } from 'node:timers/promises';
+import { strictEqual } from 'node:assert';
 
 describe('API Workflow', () => {
   // const server = null;
@@ -20,19 +21,26 @@ describe('API Workflow', () => {
   //   await server.close();
   // });
 
-  it('sss', async () => {
+  it('Should list the students', async () => {
     const server = await buildServer();
+
+    // await server.migrate();
+    // await server.seed();
+
+    await setTimeout(2500);
 
     const query = `
         query Students {
            students {
             id
-            nome
+            name
             email
+            ra
+            cpf
           }
         }`;
 
-    const res = await server.get().inject({
+    const request = await server.get().inject({
       method: 'POST',
       url: '/graphql',
       headers: {
@@ -41,8 +49,24 @@ describe('API Workflow', () => {
       payload: JSON.stringify({ query }),
     });
 
-    // console.log('res', res);
-    await setTimeout(1000);
+    const response = request.json();
+
+    strictEqual(request.statusCode, 200);
+    strictEqual(response.data.students.length, 5);
+
+    for (const student of response.data.students) {
+      strictEqual(typeof student.id, 'string');
+      strictEqual(typeof student.name, 'string');
+      strictEqual(typeof student.email, 'string');
+      strictEqual(typeof student.ra, 'string');
+      strictEqual(typeof student.cpf, 'string');
+
+      strictEqual(Object.prototype.hasOwnProperty.call(student, 'id'), true);
+      strictEqual(Object.prototype.hasOwnProperty.call(student, 'name'), true);
+      strictEqual(Object.prototype.hasOwnProperty.call(student, 'email'), true);
+      strictEqual(Object.prototype.hasOwnProperty.call(student, 'ra'), true);
+      strictEqual(Object.prototype.hasOwnProperty.call(student, 'cpf'), true);
+    }
 
     await server.stop();
   });
