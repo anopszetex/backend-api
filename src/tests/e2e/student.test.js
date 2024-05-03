@@ -1,13 +1,20 @@
-import { describe, before, after, it } from 'node:test';
+import { describe, before, /* before, after, */ it } from 'node:test';
 
 import { buildServer } from './../../server/index.js';
 
+import { setTimeout } from 'node:timers/promises';
+
 describe('API Workflow', () => {
   // const server = null;
-  // before(async () => {
-  //   const server = await buildServer();
-  //   await server.listen(4000);
-  // });
+  before(async () => {
+    process.env.DB_HOST = 'localhost';
+    process.env.DB_PORT = '5434';
+    process.env.DB_USER = 'root1';
+    process.env.DB_PASSWORD = 'root1';
+    process.env.DB_NAME = 'students-dev';
+    // const server = await buildServer();
+    // await server.listen(4000);
+  });
 
   // after(async () => {
   //   await server.close();
@@ -34,7 +41,8 @@ describe('API Workflow', () => {
       payload: JSON.stringify({ query }),
     });
 
-    console.log('res', res);
+    // console.log('res', res);
+    await setTimeout(1000);
 
     await server.stop();
   });
