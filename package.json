@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "nodemon --env-file=.env --ext js,graphql bin/index.js",
     "test": "node --test",
+    "test:env": "node --test  --env-file=.env",
     "test:watch": "node --test --watch              ",
     "db:prepare": "yarn knex:migrate && yarn knex:seed",
     "knex:migrate": "knex migrate:latest",
