@@ -1,34 +1,36 @@
-import { describe, before, /* before, after, */ it } from 'node:test';
+import { describe, before, beforeEach, afterEach, it } from 'node:test';
 
 import { buildServer } from './../../server/index.js';
-
-import { setTimeout } from 'node:timers/promises';
 import { strictEqual } from 'node:assert';
 
+// eslint-disable-next-line n/no-unpublished-import
+import { PostgreSqlContainer } from '@testcontainers/postgresql';
+
 describe('API Workflow', () => {
-  // const server = null;
+  let container = null;
+  let server = null;
+
   before(async () => {
-    process.env.DB_HOST = 'localhost';
-    process.env.DB_PORT = '5434';
-    process.env.DB_USER = 'root1';
-    process.env.DB_PASSWORD = 'root1';
-    process.env.DB_NAME = 'students-dev';
-    // const server = await buildServer();
-    // await server.listen(4000);
+    container = await new PostgreSqlContainer()
+      .withDatabase('students-dev')
+      .withExposedPorts({ host: 5433, container: 5432 })
+      .withUsername('root1')
+      .withPassword('root1')
+      .start();
   });
 
-  // after(async () => {
-  //   await server.close();
-  // });
+  beforeEach(async () => {
+    server = await buildServer();
+    await server.migrate();
+    await server.seed();
+  });
 
-  it('Should list the students', async () => {
-    const server = await buildServer();
+  afterEach(async () => {
+    await server.stop();
+    await container.stop();
+  });
 
-    // await server.migrate();
-    // await server.seed();
-
-    await setTimeout(2500);
-
+  it('Should list the students', async (t) => {
     const query = `
         query Students {
            students {
@@ -50,7 +52,6 @@ describe('API Workflow', () => {
     });
 
     const response = request.json();
-
     strictEqual(request.statusCode, 200);
     strictEqual(response.data.students.length, 5);
 
@@ -60,14 +61,11 @@ describe('API Workflow', () => {
       strictEqual(typeof student.email, 'string');
       strictEqual(typeof student.ra, 'string');
       strictEqual(typeof student.cpf, 'string');
-
       strictEqual(Object.prototype.hasOwnProperty.call(student, 'id'), true);
       strictEqual(Object.prototype.hasOwnProperty.call(student, 'name'), true);
       strictEqual(Object.prototype.hasOwnProperty.call(student, 'email'), true);
       strictEqual(Object.prototype.hasOwnProperty.call(student, 'ra'), true);
       strictEqual(Object.prototype.hasOwnProperty.call(student, 'cpf'), true);
     }
-
-    await server.stop();
   });
 });
