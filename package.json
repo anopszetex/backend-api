@@ -33,6 +33,7 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",
+    "@testcontainers/postgresql": "^10.9.0",
     "eslint": "^8.56.0",
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^9.1.0",
@@ -40,6 +41,7 @@
     "eslint-plugin-n": "^16.6.2",
     "eslint-plugin-promise": "^6.1.1",
     "nodemon": "^3.1.0",
-    "prettier": "^3.2.5"
+    "prettier": "^3.2.5",
+    "testcontainers": "^10.9.0"
   }
 }
