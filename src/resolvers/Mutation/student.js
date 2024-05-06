@@ -63,7 +63,10 @@ export async function createStudent(parent, args, context) {
     validateRa(ra),
   ]);
 
-  await context.database('students').insert({ name, email, cpf, ra });
+  const [res] = await context
+    .database('students')
+    .insert({ name, email, cpf, ra })
+    .returning(['*']);
 
-  return null;
+  return res;
 }
