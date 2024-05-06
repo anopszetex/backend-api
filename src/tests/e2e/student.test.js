@@ -1,7 +1,7 @@
-import { describe, before, beforeEach, afterEach, it } from 'node:test';
+import { describe, beforeEach, afterEach, it, after } from 'node:test';
 
 import { buildServer } from './../../server/index.js';
-import { strictEqual } from 'node:assert';
+import { deepStrictEqual, strictEqual } from 'node:assert';
 
 // eslint-disable-next-line n/no-unpublished-import
 import { PostgreSqlContainer } from '@testcontainers/postgresql';
@@ -10,16 +10,14 @@ describe('API Workflow', () => {
   let container = null;
   let server = null;
 
-  before(async () => {
+  beforeEach(async () => {
     container = await new PostgreSqlContainer()
       .withDatabase('students-dev')
       .withExposedPorts({ host: 5433, container: 5432 })
       .withUsername('root1')
       .withPassword('root1')
       .start();
-  });
 
-  beforeEach(async () => {
     server = await buildServer();
     await server.migrate();
     await server.seed();
@@ -27,6 +25,10 @@ describe('API Workflow', () => {
 
   afterEach(async () => {
     await server.stop();
+    await container.stop();
+  });
+
+  after(async () => {
     await container.stop();
   });
 
@@ -67,5 +69,49 @@ describe('API Workflow', () => {
       strictEqual(Object.prototype.hasOwnProperty.call(student, 'ra'), true);
       strictEqual(Object.prototype.hasOwnProperty.call(student, 'cpf'), true);
     }
+  });
+
+  it('Create a student', async (t) => {
+    const query = `
+    mutation CreateStudent($input: StudentInput!){
+           createStudent(input: $input) {
+            id
+            name
+            email
+            ra
+            cpf
+           }
+    }`;
+
+    const request = await server.get().inject({
+      method: 'POST',
+      url: '/graphql',
+      headers: {
+        'content-type': 'application/json; charset=utf-8',
+      },
+      payload: JSON.stringify({
+        query,
+        variables: {
+          input: {
+            name: 'John Doe',
+            email: 'teste@teste.com',
+            ra: '123456',
+            cpf: '12345678901',
+          },
+        },
+      }),
+    });
+
+    const response = request.json();
+
+    strictEqual(request.statusCode, 200);
+
+    deepStrictEqual(response.data.createStudent, {
+      id: '51',
+      name: 'John Doe',
+      email: 'teste@teste.com',
+      ra: '123456',
+      cpf: '12345678901',
+    });
   });
 });
