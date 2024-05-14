@@ -21,6 +21,10 @@ module.exports = {
     sourceType: 'module',
   },
   rules: {
+    'no-shadow': 'error',
+    'no-unused-vars': ['error'],
+    'no-undef': 'error',
+    'no-console': 'error',
     'require-jsdoc': 'off',
   },
 };
