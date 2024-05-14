@@ -114,4 +114,135 @@ describe('API Workflow', () => {
       cpf: '12345678901',
     });
   });
+
+  it('It cannot be an invalid email', async (t) => {
+    const query = `
+    mutation CreateStudent($input: StudentInput!){
+           createStudent(input: $input) {
+            id
+            name
+            email
+            ra
+            cpf
+           }
+    }`;
+
+    const request = await server.get().inject({
+      method: 'POST',
+      url: '/graphql',
+      headers: {
+        'content-type': 'application/json; charset=utf-8',
+      },
+      payload: JSON.stringify({
+        query,
+        variables: {
+          input: {
+            name: 'John Doe',
+            email: 'invalidemail',
+            ra: '123456',
+            cpf: '12345678901',
+          },
+        },
+      }),
+    });
+
+    const response = request.json();
+
+    strictEqual(request.statusCode, 200);
+
+    deepStrictEqual(response.errors[0].message, 'Invalid.email.format');
+  });
+
+  it('Deleting a student with successfull', async (t) => {
+    const query = `
+    mutation CreateStudent($input: StudentInput!){
+           createStudent(input: $input) {
+            id
+            name
+            email
+            ra
+            cpf
+           }
+    }`;
+
+    const request = await server.get().inject({
+      method: 'POST',
+      url: '/graphql',
+      headers: {
+        'content-type': 'application/json; charset=utf-8',
+      },
+      payload: JSON.stringify({
+        query,
+        variables: {
+          input: {
+            name: 'John Doe',
+            email: 'teste@teste.com',
+            ra: '123456',
+            cpf: '12345678901',
+          },
+        },
+      }),
+    });
+
+    const response = request.json();
+
+    strictEqual(request.statusCode, 200);
+
+    const delStudent = `
+    mutation DelStudent($id: ID!){
+           delStudent(id: $id)
+    }`;
+
+    const requestdel = await server.get().inject({
+      method: 'POST',
+      url: '/graphql',
+      headers: {
+        'content-type': 'application/json; charset=utf-8',
+      },
+      payload: JSON.stringify({
+        query: delStudent,
+        variables: {
+          id: response.data.createStudent.id,
+        },
+      }),
+    });
+
+    const responseDel = requestdel.json();
+    strictEqual(requestdel.statusCode, 200);
+    deepStrictEqual(responseDel.data.delStudent, true);
+  });
+
+  it('Should Try deleting a student but id is not valid', async (t) => {
+    const delStudent = `
+    mutation DelStudent($id: ID!){
+           delStudent(id: $id)
+    }`;
+
+    const request = await server.get().inject({
+      method: 'POST',
+      url: '/graphql',
+      headers: {
+        'content-type': 'application/json; charset=utf-8',
+      },
+      payload: JSON.stringify({
+        query: delStudent,
+        variables: {
+          id: 'ad99',
+        },
+      }),
+    });
+
+    const response = request.json();
+
+    strictEqual(request.statusCode, 200);
+
+    deepStrictEqual(response.errors[0].message, 'Invalid.id');
+
+    deepStrictEqual(
+      response.errors[0].extensions.code,
+      'BUSINESS_VALIDATION_FAILED'
+    );
+
+    deepStrictEqual(response.errors[0].path[0], 'delStudent');
+  });
 });
