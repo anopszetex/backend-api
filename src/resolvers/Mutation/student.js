@@ -53,7 +53,13 @@ async function validateRa(ra) {
   }
 }
 
-export async function createStudent(parent, args, context) {
+function parseToNumber(value) {
+  if (value) {
+    return +value;
+  }
+}
+
+export async function createStudent(_, args, context) {
   const { name, email, cpf, ra } = args.input ?? {};
 
   await Promise.all([
@@ -69,4 +75,20 @@ export async function createStudent(parent, args, context) {
     .returning(['*']);
 
   return res;
+}
+
+export async function delStudent(_, args, context) {
+  const { id } = args;
+
+  const isValidId = parseToNumber(id);
+
+  if (!isValidId) {
+    return Promise.reject(ValidationError.build('Invalid.id'));
+  }
+
+  const { database } = context;
+
+  const res = await database('students').where({ id }).del();
+
+  return !!res;
 }
