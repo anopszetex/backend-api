@@ -245,4 +245,87 @@ describe('API Workflow', () => {
 
     deepStrictEqual(response.errors[0].path[0], 'delStudent');
   });
+
+  it('You must delete a student who does not exist.', async (t) => {
+    const delStudent = `
+    mutation DelStudent($id: ID!){
+           delStudent(id: $id)
+    }`;
+
+    const request = await server.get().inject({
+      method: 'POST',
+      url: '/graphql',
+      headers: {
+        'content-type': 'application/json; charset=utf-8',
+      },
+      payload: JSON.stringify({
+        query: delStudent,
+        variables: {
+          id: '999',
+        },
+      }),
+    });
+
+    const responseDel = request.json();
+    strictEqual(request.statusCode, 200);
+    deepStrictEqual(responseDel.data.delStudent, false);
+  });
+
+  it('RA must be unique', async (t) => {
+    const query = `
+    mutation CreateStudent($input: StudentInput!){
+           createStudent(input: $input) {
+            id
+            name
+            email
+            ra
+            cpf
+           }
+    }`;
+
+    await server.get().inject({
+      method: 'POST',
+      url: '/graphql',
+      headers: {
+        'content-type': 'application/json; charset=utf-8',
+      },
+      payload: JSON.stringify({
+        query,
+        variables: {
+          input: {
+            name: 'John Doe',
+            email: 'teste@teste.com',
+            ra: '123456',
+            cpf: '12345678901',
+          },
+        },
+      }),
+    });
+
+    const request = await server.get().inject({
+      method: 'POST',
+      url: '/graphql',
+      headers: {
+        'content-type': 'application/json; charset=utf-8',
+      },
+      payload: JSON.stringify({
+        query,
+        variables: {
+          input: {
+            name: 'any_test',
+            email: 'any_teste@teste.com',
+            ra: '123456',
+            cpf: '12345678901',
+          },
+        },
+      }),
+    });
+
+    const response = request.json();
+
+    const [error] = response.errors;
+    strictEqual(error.message, 'errorSave');
+    deepStrictEqual(error.extensions.code, 'INTERNAL_SERVER_ERROR');
+    strictEqual(error.path[0], 'createStudent');
+  });
 });
