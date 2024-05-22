@@ -16,3 +16,21 @@ export class ValidationError extends GraphQLError {
     return new ValidationError(message, validationContext);
   }
 }
+
+export class AppError extends GraphQLError {
+  constructor(message, validationContext) {
+    super(message, {
+      extensions: {
+        code: 'INTERNAL_SERVER_ERROR',
+        ...validationContext,
+      },
+    });
+
+    Object.defineProperty(this, 'name', { value: 'AppError' });
+    Object.defineProperty(this, 'statusCode', { value: 500 });
+  }
+
+  static build(message, validationContext) {
+    return new AppError(message, validationContext);
+  }
+}
