@@ -328,4 +328,81 @@ describe('API Workflow', () => {
     deepStrictEqual(error.extensions.code, 'INTERNAL_SERVER_ERROR');
     strictEqual(error.path[0], 'createStudent');
   });
+
+  it('Update a student', async (t) => {
+    const createGQL = `
+    mutation CreateStudent($input: StudentInput!){
+           createStudent(input: $input) {
+            id
+            name
+            email
+            ra
+            cpf
+           }
+    }`;
+
+    const request = await server.get().inject({
+      method: 'POST',
+      url: '/graphql',
+      headers: {
+        'content-type': 'application/json; charset=utf-8',
+      },
+      payload: JSON.stringify({
+        query: createGQL,
+        variables: {
+          input: {
+            name: 'John Doe',
+            email: 'teste@teste.com',
+            ra: '123456',
+            cpf: '12345678901',
+          },
+        },
+      }),
+    });
+
+    const response = request.json();
+
+    const updateGQL = `
+    mutation UpdateStudent($id: ID!, $input: StudentInput!){
+           updateStudent(id: $id, input: $input) {
+            id
+            name
+            email
+            ra
+            cpf
+           }
+    }`;
+
+    const requestUpdate = await server.get().inject({
+      method: 'POST',
+      url: '/graphql',
+      headers: {
+        'content-type': 'application/json; charset=utf-8',
+      },
+      payload: JSON.stringify({
+        query: updateGQL,
+        variables: {
+          id: response.data.createStudent.id,
+          input: {
+            name: 'Guest Doe',
+            email: 'guest_any@hotmail.com',
+            ra: '123456',
+            cpf: '12345678901',
+          },
+        },
+      }),
+    });
+
+    const updated = requestUpdate.json();
+
+    strictEqual(requestUpdate.statusCode, 200);
+
+    deepStrictEqual(updated.data.updateStudent, {
+      id: '51',
+      name: 'Guest Doe',
+      email: 'guest_any@hotmail.com',
+      ra: '123456',
+      cpf: '12345678901',
+    });
+  });
 });
