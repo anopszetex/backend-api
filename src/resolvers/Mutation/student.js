@@ -119,8 +119,18 @@ export async function updateStudent(_, args, context) {
     validateRa(ra),
   ]);
 
-  const [res] = await context
-    .database('students')
+  const { database } = context;
+
+  const findExists = await database('students')
+    .select('id')
+    .where({ id })
+    .first();
+
+  if (!findExists) {
+    return await Promise.reject(ValidationError.build('invalidRecord'));
+  }
+
+  const [res] = await database('students')
     .where({ id })
     .update({ name, email, cpf, ra })
     .returning(['*'])
