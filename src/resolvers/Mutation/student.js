@@ -101,3 +101,32 @@ export async function delStudent(_, args, context) {
 
   return !!res;
 }
+
+export async function updateStudent(_, args, context) {
+  const { name, email, cpf, ra } = args.input ?? {};
+  const { id } = args;
+
+  const isValidId = parseToNumber(id);
+
+  if (!isValidId) {
+    return Promise.reject(ValidationError.build('Invalid.id'));
+  }
+
+  await Promise.all([
+    validateField(name, 'name'),
+    validateEmail(email),
+    validateCpf(cpf),
+    validateRa(ra),
+  ]);
+
+  const [res] = await context
+    .database('students')
+    .where({ id })
+    .update({ name, email, cpf, ra })
+    .returning(['*'])
+    .catch((err) => {
+      return Promise.reject(AppError.build('errorUpdate'));
+    });
+
+  return res;
+}

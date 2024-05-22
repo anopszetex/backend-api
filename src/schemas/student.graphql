@@ -16,6 +16,7 @@ input StudentInput {
 extend type Mutation {
   createStudent(input: StudentInput!): Student!
   delStudent(id: ID!): Boolean!
+  updateStudent(id: ID!, input: StudentInput!): Student!
 }
 
 extend type Query {
