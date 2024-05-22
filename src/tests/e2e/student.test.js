@@ -32,7 +32,7 @@ describe('API Workflow', () => {
     await container.stop();
   });
 
-  it('Should list the students', async (t) => {
+  it('Should list the students', async () => {
     const query = `
         query Students {
            students {
@@ -71,7 +71,7 @@ describe('API Workflow', () => {
     }
   });
 
-  it('Create a student', async (t) => {
+  it('Create a student', async () => {
     const query = `
     mutation CreateStudent($input: StudentInput!){
            createStudent(input: $input) {
@@ -115,7 +115,7 @@ describe('API Workflow', () => {
     });
   });
 
-  it('It cannot be an invalid email', async (t) => {
+  it('It cannot be an invalid email', async () => {
     const query = `
     mutation CreateStudent($input: StudentInput!){
            createStudent(input: $input) {
@@ -153,7 +153,7 @@ describe('API Workflow', () => {
     deepStrictEqual(response.errors[0].message, 'Invalid.email.format');
   });
 
-  it('Deleting a student with successfull', async (t) => {
+  it('Deleting a student with successfull', async () => {
     const query = `
     mutation CreateStudent($input: StudentInput!){
            createStudent(input: $input) {
@@ -212,7 +212,7 @@ describe('API Workflow', () => {
     deepStrictEqual(responseDel.data.delStudent, true);
   });
 
-  it('Should Try deleting a student but id is not valid', async (t) => {
+  it('Should Try deleting a student but id is not valid', async () => {
     const delStudent = `
     mutation DelStudent($id: ID!){
            delStudent(id: $id)
@@ -246,7 +246,7 @@ describe('API Workflow', () => {
     deepStrictEqual(response.errors[0].path[0], 'delStudent');
   });
 
-  it('You must delete a student who does not exist.', async (t) => {
+  it('You must delete a student who does not exist.', async () => {
     const delStudent = `
     mutation DelStudent($id: ID!){
            delStudent(id: $id)
@@ -406,7 +406,7 @@ describe('API Workflow', () => {
     });
   });
 
-  it('Update a student with an existing registration number (RA)', async (t) => {
+  it('Update a student with an existing registration number (RA)', async () => {
     const createGQL = `
     mutation CreateStudent($input: StudentInput!){
            createStudent(input: $input) {
@@ -499,7 +499,7 @@ describe('API Workflow', () => {
     strictEqual(error.path[0], 'updateStudent');
   });
 
-  it('Should update a student with invalid id', async (t) => {
+  it('Should update the student with invalid id', async () => {
     const createGQL = `
     mutation CreateStudent($input: StudentInput!){
            createStudent(input: $input) {
@@ -566,5 +566,77 @@ describe('API Workflow', () => {
     strictEqual(requestUpdate.statusCode, 200);
     const [error] = updated.errors;
     strictEqual(error.message, 'Invalid.id');
+  });
+
+  it('Should return a invalid record', async () => {
+    const createGQL = `
+    mutation CreateStudent($input: StudentInput!){
+           createStudent(input: $input) {
+            id
+            name
+            email
+            ra
+            cpf
+           }
+    }`;
+
+    await server.get().inject({
+      method: 'POST',
+      url: '/graphql',
+      headers: {
+        'content-type': 'application/json; charset=utf-8',
+      },
+      payload: JSON.stringify({
+        query: createGQL,
+        variables: {
+          input: {
+            name: 'John Doe',
+            email: 'teste@teste.com',
+            ra: '123456',
+            cpf: '12345678901',
+          },
+        },
+      }),
+    });
+
+    const updateGQL = `
+    mutation UpdateStudent($id: ID!, $input: StudentInput!){
+           updateStudent(id: $id, input: $input) {
+            id
+            name
+            email
+            ra
+            cpf
+           }
+    }`;
+
+    const requestUpdate = await server.get().inject({
+      method: 'POST',
+      url: '/graphql',
+      headers: {
+        'content-type': 'application/json; charset=utf-8',
+      },
+      payload: JSON.stringify({
+        query: updateGQL,
+        variables: {
+          id: '999',
+          input: {
+            name: 'Guest Doe',
+            email: 'guest_any@hotmail.com',
+            ra: '654321',
+            cpf: '12345678901',
+          },
+        },
+      }),
+    });
+
+    const updated = requestUpdate.json();
+
+    strictEqual(requestUpdate.statusCode, 200);
+
+    const [error] = updated.errors;
+    strictEqual(error.message, 'invalidRecord');
+    deepStrictEqual(error.extensions.code, 'BUSINESS_VALIDATION_FAILED');
+    strictEqual(error.path[0], 'updateStudent');
   });
 });
