@@ -92,7 +92,12 @@ export async function delStudent(_, args, context) {
 
   const { database } = context;
 
-  const res = await database('students').where({ id }).del();
+  const res = await database('students')
+    .where({ id })
+    .del()
+    .catch(() => {
+      return Promise.reject(AppError.build('errorDelete'));
+    });
 
   return !!res;
 }
