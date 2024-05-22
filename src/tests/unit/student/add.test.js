@@ -1,5 +1,5 @@
 import { describe, it } from 'node:test';
-import { fail, strictEqual } from 'node:assert';
+import { fail, strictEqual, deepEqual } from 'node:assert';
 
 import { createStudent } from './../../../resolvers/Mutation/student.js';
 
@@ -184,7 +184,7 @@ describe('Mutation to add a student', () => {
     }
   });
 
-  it('CPF must have a valid format', { only: true }, async (t) => {
+  it('CPF must have a valid format', async () => {
     const input = {
       name: 'any_name',
       email: 'teste@teste.com',
@@ -232,12 +232,36 @@ describe('Mutation to add a student', () => {
     }
   });
 
-  it.todo('validate is cpf is valid');
+  it('must create a student', async (t) => {
+    const input = {
+      name: 'any_name',
+      email: 'teste@teste.com',
+      cpf: '28861701000',
+      ra: '123456',
+    };
 
-  it.todo('must create a student');
+    const expected = Object.assign({}, input, { id: 1 });
 
-  // todo - must be test e2e
-  it.todo('RA must be unique');
-  it.todo('CPF must be unique');
-  it.todo('must return the student');
+    const query = Object.assign(Promise.resolve([expected]), {
+      insert: t.mock.fn(() => query),
+      returning: t.mock.fn(() => query),
+    });
+
+    const context = {
+      database: t.mock.fn(() => query),
+    };
+
+    const res = await createStudent({}, { input }, context);
+
+    strictEqual(res, expected);
+
+    deepEqual(query.insert.mock.calls[0].arguments[0], input);
+    strictEqual(query.insert.mock.calls.length, 1);
+
+    deepEqual(query.returning.mock.calls[0].arguments[0], ['*']);
+    strictEqual(query.returning.mock.calls.length, 1);
+
+    deepEqual(context.database.mock.calls[0].arguments[0], 'students');
+    deepEqual(context.database.mock.calls.length, 1);
+  });
 });
