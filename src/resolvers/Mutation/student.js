@@ -1,5 +1,6 @@
 import {
   ValidationError,
+  AppError,
   isValidEmail,
   isValidFormat,
   sanitizeCpf,
@@ -72,7 +73,10 @@ export async function createStudent(_, args, context) {
   const [res] = await context
     .database('students')
     .insert({ name, email, cpf, ra })
-    .returning(['*']);
+    .returning(['*'])
+    .catch((err) => {
+      return Promise.reject(AppError.build('errorSave'));
+    });
 
   return res;
 }
