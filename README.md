@@ -156,3 +156,17 @@ mutation DelStudent($id: ID!) {
   "id": 1
 }
 ```
+
+### Query para listar todos os estudantes
+
+```graphql
+query Students {
+  students {
+    id
+    name
+    email
+    ra
+    cpf
+  }
+}
+```
