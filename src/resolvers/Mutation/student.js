@@ -6,7 +6,7 @@ import {
   sanitizeCpf,
 } from '../../support/index.js';
 
-function validateField(value, fieldName) {
+async function validateField(value, fieldName) {
   if (!value) {
     return Promise.reject(ValidationError.build(`Invalid.${fieldName}`));
   }
