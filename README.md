@@ -48,7 +48,7 @@ npm run test
 # para observar qualquer alteração nos testes
 npm run test:watch
 
-# para rodar apenas o teste unitário você pode passar o caminho do arquivo
+# para rodar apenas o teste unitário e/ou e2e, você pode passar o caminho do arquivo
 npm run test caminho/para/arquivo.test.js
 ```
 
@@ -68,4 +68,24 @@ docker-compose up -d
 
 # encerra o serviço docker e os dados associados a eles
 docker-compose down -v
+```
+
+### Migrations e Seeds 🌱
+
+```sh
+# executa as migrations
+npm run knex:migrate
+  ️
+# executa as seeds
+npm run knex:seed
+```
+
+### Lint e Prettier 🧹
+
+```sh
+# verifica se há erros no código
+npm run lint:ci
+
+# formata os arquivos
+npm run format
 ```
