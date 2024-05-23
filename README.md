@@ -12,7 +12,6 @@ Este projeto é uma API GraphQL que fornece o cadastro de estudantes(CRUD).
 
 ### Requisitos 📋
 
-Instalação
 Clone este repositório para o seu ambiente local:
 
 ```bash
@@ -31,7 +30,6 @@ Instale as dependências do projeto:
 npm ci --silent
 ```
 
-Iniciando o Servidor
 Para iniciar o servidor, execute o seguinte comando:
 
 ```bash
