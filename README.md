@@ -89,3 +89,31 @@ npm run lint:ci
 # formata os arquivos
 npm run format
 ```
+
+### Scripts 📜
+
+#### Add
+
+```graphql
+# mutation para criar um estudante
+mutation CreateStudent($input: StudentInput!) {
+  createStudent(input: $input) {
+    id
+    name
+    email
+    ra
+    cpf
+  }
+}
+```
+
+```json
+{
+  "input": {
+    "name": "John Doe",
+    "email": "teste@teste.com",
+    "ra": "123456",
+    "cpf": "12345678901"
+  }
+}
+```
