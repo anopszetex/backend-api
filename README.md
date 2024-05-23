@@ -92,10 +92,9 @@ npm run format
 
 ### Scripts 📜
 
-#### Add
+#### Mutation para criar um estudante
 
 ```graphql
-# mutation para criar um estudante
 mutation CreateStudent($input: StudentInput!) {
   createStudent(input: $input) {
     id
@@ -115,5 +114,45 @@ mutation CreateStudent($input: StudentInput!) {
     "ra": "123456",
     "cpf": "12345678901"
   }
+}
+```
+
+### Mutation para atualizar um estudante
+
+```graphql
+mutation UpdateStudent($id: ID!, $input: StudentInput!) {
+  updateStudent(id: $id, input: $input) {
+    id
+    name
+    email
+    ra
+    cpf
+  }
+}
+```
+
+```json
+{
+  "id": 1,
+  "input": {
+    "name": "John Doe1",
+    "email": "teste@teste.com",
+    "ra": "123456",
+    "cpf": "12345678901"
+  }
+}
+```
+
+### Mutation para deletar um estudante
+
+```graphql
+mutation DelStudent($id: ID!) {
+  delStudent(id: $id)
+}
+```
+
+```json
+{
+  "id": 1
 }
 ```
