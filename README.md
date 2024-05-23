@@ -34,6 +34,10 @@ npm ci --silent
 Para iniciar o servidor, execute o seguinte comando:
 
 ```bash
+# antes de iniciar o servidor, você deve subir o banco de dados
+# para isso, você pode usar o docker-compose
+docker-compose up -d
+
 npm run dev
 ```
 
