@@ -8,7 +8,6 @@ async function start() {
   try {
     await server.listen(port);
   } catch (err) {
-    //
     server.get().log.error(`Error starting server: ${err}`);
     return Promise.reject(err);
   }
