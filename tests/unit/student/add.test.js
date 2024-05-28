@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test';
 import { fail, strictEqual, deepEqual } from 'node:assert';
 
-import { createStudent } from './../../../resolvers/Mutation/student.js';
+import { createStudent } from './../../../src/resolvers/Mutation/student.js';
 
 describe('Mutation to add a student', () => {
   function expectError(error, message) {

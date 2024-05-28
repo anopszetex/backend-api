@@ -1,6 +1,6 @@
 import { describe, beforeEach, afterEach, it, after } from 'node:test';
 
-import { buildServer } from './../../server/index.js';
+import { buildServer } from '../../src/server/index.js';
 import { deepStrictEqual, strictEqual } from 'node:assert';
 
 // eslint-disable-next-line n/no-unpublished-import
